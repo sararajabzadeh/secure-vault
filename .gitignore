@@ -8,3 +8,17 @@ wheels/
 
 # Virtual environments
 .venv
+
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Private application data
+data/
+backups/
+*.db
+*.db-*
+*.sqlite3
+*.sqlite3-*
