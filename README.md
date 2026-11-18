@@ -17,4 +17,9 @@ Encryption keys must be stored separately from the database and file storage.
 
 ## Current progress
 
-Project setup only. The security goals above are not implemented yet.
+- A GET /health endpoint is implemented.
+- Argon2id password hashing and verification helpers are implemented.
+- Automated tests cover password verification and salted hashing.
+- GitHub Actions is configured to run Ruff and pytest.
+
+Registration, login, file storage, and file encryption are not implemented yet.

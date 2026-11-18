@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   ruff:
-    name: Ruff
+    name: Python checks
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -36,3 +36,7 @@ jobs:
 
       - name: Check formatting
         run: uv run --locked ruff format --check .
+
+      - name: Run tests
+        run: uv run --locked python -m pytest -q
+        
