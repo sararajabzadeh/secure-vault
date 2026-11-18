@@ -24,3 +24,4 @@ backups/
 *.sqlite3-*
 
 .ruff_cache/
+.pytest_cache/
