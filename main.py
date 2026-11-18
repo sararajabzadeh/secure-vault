@@ -1,6 +1,8 @@
-def main():
-    print("Hello from secure-vault!")
+from fastapi import FastAPI
+
+app = FastAPI(title="Secure Vault")
 
 
-if __name__ == "__main__":
-    main()
+@app.get("/health")
+def health_check() -> dict[str, str]:
+    return {"status": "ok"}
