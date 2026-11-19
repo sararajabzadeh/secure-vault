@@ -1472,6 +1472,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "argon2-cffi" },
     { name = "fastapi", extra = ["standard"] },
+    { name = "pydantic" },
 ]
 
 [package.dev-dependencies]
@@ -1484,6 +1485,7 @@ dev = [
 requires-dist = [
     { name = "argon2-cffi", specifier = ">=25.1.0" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.165.0" },
+    { name = "pydantic", specifier = ">=2,<3" },
 ]
 
 [package.metadata.requires-dev]
