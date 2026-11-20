@@ -18,12 +18,16 @@ Implemented:
 - A database connection helper enables foreign-key enforcement,
   commits successful transactions, and rolls back failed transactions.
 - Automated tests cover registration, authentication helpers,
-  password hashing, and database behavior.
+  password hashing, database behavior, and session creation,
+  token validation, expiration, and revocation.
 - GitHub Actions runs Ruff and pytest.
+- Session helpers create secure random tokens and identify accounts
+  from valid tokens.
+- Only SHA-256 hashes of session tokens are stored in the database.
+- Sessions expire after one hour by default and can be revoked individually.
 
 In progress:
 
-- Session token creation, validation, expiration, and revocation.
 - Login and logout endpoints.
 
 Planned:
