@@ -3,13 +3,14 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import FastAPI, HTTPException, Request, Response, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from database import DATABASE_PATH, init_db
-from schemas import RegistrationRequest
-from users import create_user
+from schemas import LoginRequest, RegistrationRequest
+from sessions import create_session
+from users import authenticate_user, create_user
 
 
 def create_app(db_path: Path = DATABASE_PATH) -> FastAPI:
@@ -59,6 +60,35 @@ def create_app(db_path: Path = DATABASE_PATH) -> FastAPI:
             raise
 
         return {"username": registration.username}
+
+    @application.post("/login")
+    def login(
+        credentials: LoginRequest,
+        response: Response,
+    ) -> dict[str, str]:
+        user_id = authenticate_user(
+            username=credentials.username,
+            password=credentials.password.get_secret_value(),
+            db_path=db_path,
+        )
+
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid username or password.",
+            )
+
+        token = create_session(
+            user_id=user_id,
+            db_path=db_path,
+        )
+
+        response.headers["Cache-Control"] = "no-store"
+
+        return {
+            "access_token": token,
+            "token_type": "bearer",
+        }
 
     return application
 

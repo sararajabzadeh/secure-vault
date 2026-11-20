@@ -25,10 +25,13 @@ Implemented:
   from valid tokens.
 - Only SHA-256 hashes of session tokens are stored in the database.
 - Sessions expire after one hour by default and can be revoked individually.
+- `POST /login` verifies credentials and returns a bearer session token.
+- Login API tests cover successful authentication, rejected credentials,
+  invalid requests, and prevention of session creation on failed attempts.
 
 In progress:
 
-- Login and logout endpoints.
+- Logout endpoint.
 
 Planned:
 
