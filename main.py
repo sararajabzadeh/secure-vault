@@ -2,14 +2,16 @@ import sqlite3
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Annotated
 
-from fastapi import FastAPI, HTTPException, Request, Response, status
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from database import DATABASE_PATH, init_db
 from schemas import LoginRequest, RegistrationRequest
-from sessions import create_session
+from sessions import create_session, get_session_user_id, revoke_session
 from users import authenticate_user, create_user
 
 
@@ -23,6 +25,8 @@ def create_app(db_path: Path = DATABASE_PATH) -> FastAPI:
         title="Secure Vault",
         lifespan=lifespan,
     )
+
+    bearer_scheme = HTTPBearer(auto_error=False)
 
     @application.exception_handler(RequestValidationError)
     async def handle_validation_error(
@@ -89,6 +93,32 @@ def create_app(db_path: Path = DATABASE_PATH) -> FastAPI:
             "access_token": token,
             "token_type": "bearer",
         }
+
+    @application.post(
+        "/logout",
+        status_code=status.HTTP_204_NO_CONTENT,
+    )
+    def logout(
+        credentials: Annotated[
+            HTTPAuthorizationCredentials | None,
+            Depends(bearer_scheme),
+        ],
+    ) -> Response:
+        token = credentials.credentials if credentials is not None else None
+
+        if get_session_user_id(token, db_path=db_path) is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired session.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        revoke_session(token, db_path=db_path)
+
+        return Response(
+            status_code=status.HTTP_204_NO_CONTENT,
+            headers={"Cache-Control": "no-store"},
+        )
 
     return application
 
