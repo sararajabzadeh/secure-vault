@@ -28,10 +28,7 @@ Implemented:
 - `POST /login` verifies credentials and returns a bearer session token.
 - Login API tests cover successful authentication, rejected credentials,
   invalid requests, and prevention of session creation on failed attempts.
-
-In progress:
-
-- Logout endpoint.
+- `POST /logout` revokes the session identified by the bearer token.
 
 Planned:
 
@@ -87,6 +84,16 @@ Responses:
 | 422 | Request is invalid | `{"detail":"Invalid request."}` |
 
 Registering an account does not yet create a login session.
+
+## Log out
+
+Send `POST /logout` with the token returned by `/login` in the
+`Authorization: Bearer <access_token>` header. No request body is required.
+
+A successful logout returns `204 No Content`. The token can no longer
+authenticate requests. Other sessions for the same account stay active.
+
+A missing, invalid, expired, or already revoked token returns `401 Unauthorized`.
 
 ## Run checks
 
